@@ -3,6 +3,7 @@ const Trainer = require('../models/trainerModel');
 const bcrypt = require('bcryptjs');
 const cloudinary = require('cloudinary').v2;
 const streamifier = require('streamifier');
+const jwt = require('jsonwebtoken');
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -70,7 +71,8 @@ const registerTrainer = async (req, res) => {
     });
 
     const data = await trainer.save();
-    res.status(201).json({ message: 'Trainer registered successfully', data });
+    const token = jwt.sign({ id: trainer._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    res.status(201).json({ message: 'Trainer registered successfully', data, token });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -117,7 +119,7 @@ const getSingleTrainer = async (req, res) => {
       return res.status(404).json({ message: 'Trainer not found' });
     }
 
-    res.json({message: 'Trainer found successfully', trainer});
+    res.json({ message: 'Trainer found successfully', trainer });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
@@ -148,10 +150,26 @@ const updateTrainer = async (req, res) => {
   }
 };
 
+const loginTrainer = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const trainer = await Trainer.findOne({ email });
+    if (!trainer || !await bcrypt.compare(password, trainer.password)) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const token = jwt.sign({ id: trainer._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    res.json({ message: 'Login successful', token });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   registerTrainer,
   deleteTrainer,
   updateTrainer,
   getAllTrainers,
   getSingleTrainer,
+  loginTrainer
 };

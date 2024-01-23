@@ -2,21 +2,7 @@ const express = require('express');
 const router = express.Router();
 const trainerController = require('../controllers/trainerController');
 const multer = require('multer');
-
-// Configure multer for file upload
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './smart/'); // Make sure the 'smart/' directory exists
-  },
-});
-
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image/')) {
-    cb(null, true);
-  } else {
-    cb(new Error('Only image files are allowed!'), false);
-  }
-};
+const authenticateUser = require('../middlewares/authenticateUser');
 
 const upload = multer({
   // storage: storage,
@@ -27,9 +13,10 @@ const upload = multer({
 router.post('/register', upload.single('image'), trainerController.registerTrainer);
 
 // Other routes
-router.delete('/:id', trainerController.deleteTrainer);
+router.delete('/:id', authenticateUser, trainerController.deleteTrainer);
+router.patch('/:id', authenticateUser, trainerController.updateTrainer);
 router.get('/all', trainerController.getAllTrainers);
 router.get('/:id', trainerController.getSingleTrainer);
-router.patch('/:id', trainerController.updateTrainer);
+router.post('/login', trainerController.loginTrainer);
 
 module.exports = router;

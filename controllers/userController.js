@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('../models/userModel'); // Adjust the path according to your project structure
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 // Registration controller
 const register = async (req, res) => {
@@ -29,7 +30,8 @@ const register = async (req, res) => {
 
     // Save the user
     const data = await user.save();
-    res.status(201).json({ message: 'User registered successfully', data: data });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    res.status(201).json({ message: 'User registered successfully', data: data, token: token });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -145,12 +147,12 @@ const login = async (req, res) => {
 
       // User authenticated, proceed to login
       // Here you might want to generate a token or a session
-      res.json({ message: 'Login successful', user: sanitizedUser });
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+      res.json({ message: 'Login successful', user: sanitizedUser, token });
   } catch (error) {
       res.status(500).json({ error: error.message });
   }
 };
-
 
 
 module.exports = {

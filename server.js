@@ -6,6 +6,10 @@ const dotenv = require('dotenv');
 const userRoutes = require('./routes/userRoutes.js')
 const trainerRoutes = require('./routes/trainerRoutes.js')
 const uploadRoutes = require('./routes/uploadRoutes.js')
+const programRoutes = require('./routes/programRoutes.js')
+const adminRoutes = require('./routes/adminRoutes.js')
+
+
 dotenv.config();
 
 const app = express();
@@ -28,6 +32,8 @@ mongoose
 app.use('/api/users', userRoutes);
 app.use('/api/trainers', trainerRoutes);
 app.use('/upload', uploadRoutes);
+app.use('/api', programRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 8000;
