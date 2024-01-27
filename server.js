@@ -8,6 +8,7 @@ const trainerRoutes = require('./routes/trainerRoutes.js')
 const uploadRoutes = require('./routes/uploadRoutes.js')
 const programRoutes = require('./routes/programRoutes.js')
 const adminRoutes = require('./routes/adminRoutes.js')
+const paymentRoutes = require('./routes/paymentRoutes');
 const cors = require('cors');
 
 dotenv.config();
@@ -39,6 +40,7 @@ app.use('/api/trainers', trainerRoutes);
 app.use('/upload', uploadRoutes);
 app.use('/api', programRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/payment', paymentRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 8000;
