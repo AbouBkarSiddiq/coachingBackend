@@ -121,18 +121,18 @@ const login = async (req, res) => {
       // Find the user by email and role
       const user = await User.findOne({ email, role });
       if (!user) {
-          return res.status(404).json({ error: 'User not found' });
+          return res.status(404).json({success: false, error: 'User not found' });
       }
 
       // Check if user is approved
       if (!user.isApproved) {
-          return res.status(403).json({ error: 'User not approved' });
+          return res.status(403).json({ success: false, error: 'User not approved' });
       }
 
       // Verify password
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-          return res.status(400).json({ error: 'Invalid credentials' });
+          return res.status(400).json({ success: false, error: 'Invalid credentials' });
       }
 
       // Create a sanitized user object without sensitive fields
