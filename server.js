@@ -8,12 +8,17 @@ const trainerRoutes = require('./routes/trainerRoutes.js')
 const uploadRoutes = require('./routes/uploadRoutes.js')
 const programRoutes = require('./routes/programRoutes.js')
 const adminRoutes = require('./routes/adminRoutes.js')
-
+const cors = require('cors');
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+
+const corsOptions = {
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002']
+};
+app.use(cors(corsOptions));
 
 app.get("/", (req, res) => {
   res.send("hello world")

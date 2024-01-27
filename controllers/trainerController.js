@@ -152,18 +152,39 @@ const updateTrainer = async (req, res) => {
 
 const loginTrainer = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const trainer = await Trainer.findOne({ email });
-    if (!trainer || !await bcrypt.compare(password, trainer.password)) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
+      const { email, password } = req.body;
 
-    const token = jwt.sign({ id: trainer._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
-    res.json({ message: 'Login successful', token });
+      const trainer = await Trainer.findOne({ email });
+      if (!trainer) {
+          return res.status(404).json({ error: 'Trainer not found' });
+      }
+
+      if (!trainer.isApproved) {
+          return res.status(403).json({ error: 'Trainer not approved' });
+      }
+
+      const isMatch = await bcrypt.compare(password, trainer.password);
+      if (!isMatch) {
+          return res.status(400).json({ error: 'Invalid credentials' });
+      }
+
+      // Create a sanitized trainer object without sensitive fields
+      const sanitizedTrainer = {
+          _id: trainer._id,
+          fullName: trainer.fullName,
+          email: trainer.email,
+          isApproved: trainer.isApproved,
+          // Add other fields you want to include in the response
+      };
+
+      // Trainer authenticated, proceed to login
+      const token = jwt.sign({ id: trainer._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+      res.json({ message: 'Login successful', trainer: sanitizedTrainer, token });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+      res.status(500).json({ error: error.message });
   }
 };
+
 
 module.exports = {
   registerTrainer,
