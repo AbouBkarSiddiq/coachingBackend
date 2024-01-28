@@ -171,9 +171,17 @@ const loginTrainer = async (req, res) => {
       // Create a sanitized trainer object without sensitive fields
       const sanitizedTrainer = {
           _id: trainer._id,
-          fullName: trainer.fullName,
+          firstName: trainer.firstName,
+          lastName: trainer.lastName,
           email: trainer.email,
           isApproved: trainer.isApproved,
+          role: trainer.role,
+          phone: trainer.phone,
+          category: trainer.category,
+          subCategory: trainer.subCategory,
+          gender: trainer.gender,
+          image: trainer.image,
+          
           // Add other fields you want to include in the response
       };
 
