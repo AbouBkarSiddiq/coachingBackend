@@ -9,6 +9,7 @@ const uploadRoutes = require('./routes/uploadRoutes.js')
 const programRoutes = require('./routes/programRoutes.js')
 const adminRoutes = require('./routes/adminRoutes.js')
 const paymentRoutes = require('./routes/paymentRoutes');
+const totalRoutes = require('./routes/totalRoutes');
 const cors = require('cors');
 
 dotenv.config();
@@ -41,7 +42,7 @@ app.use('/upload', uploadRoutes);
 app.use('/api', programRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/payment', paymentRoutes);
-
+app.use('/api', totalRoutes);
 // Start the server
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
